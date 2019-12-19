@@ -12,11 +12,14 @@
         "symfony/messenger": "^4.4|^5.0",
         "symfony/routing": "^4.4|^5.0",
         "symfony/polyfill-uuid": "^1.13",
+        "symfony/polyfill-uuid": "^1.13",
         "symfony/twig-bundle": "^4.4|^5.0"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^5.0",
-        "friendsofphp/php-cs-fixer": "^2.16"
+        "doctrine/dbal": "^2.10",
+        "friendsofphp/php-cs-fixer": "^2.16",
+        "roave/security-advisories": "dev-master",
+        "symfony/phpunit-bridge": "^5.0"
     },
     "license": "MIT",
     "autoload": {
