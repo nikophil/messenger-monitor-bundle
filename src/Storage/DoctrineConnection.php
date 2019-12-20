@@ -41,6 +41,22 @@ SQL
         );
     }
 
+    public function updateMessage(StoredMessage $storedMessage): void
+    {
+        $this->executeQuery(
+            <<<SQL
+UPDATE {$this->tableName}
+    SET received_at = :received_at
+WHERE id = :id
+SQL
+            ,
+            [
+                'received_at' => null !== $storedMessage->getReceivedAt() ? $storedMessage->getReceivedAt()->format('Y-m-d H:i:s') : null,
+                'id' => $storedMessage->getId(),
+            ]
+        );
+    }
+
     public function findMessage(string $id): ?StoredMessage
     {
         $statement = $this->executeQuery(
@@ -87,7 +103,7 @@ SQL
         $table->addColumn('id', Types::GUID)->setNotnull(true);
         $table->addColumn('class', Types::STRING)->setLength(255)->setNotnull(true);
         $table->addColumn('dispatched_at', Types::DATETIME_IMMUTABLE)->setNotnull(true);
-        $table->addColumn('handle_started_at', Types::DATETIME_IMMUTABLE)->setNotnull(false);
+        $table->addColumn('received_at', Types::DATETIME_IMMUTABLE)->setNotnull(false);
         $table->addColumn('handle_finished_at', Types::DATETIME_IMMUTABLE)->setNotnull(false);
         $table->addColumn('retries', Types::INTEGER)->setDefault(0);
         $table->setPrimaryKey(['id']);

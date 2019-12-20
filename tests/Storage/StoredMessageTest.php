@@ -28,6 +28,23 @@ final class StoredMessageTest extends TestCase
         $this->assertSame(Message::class, $storedMessage->getMessageClass());
     }
 
+    public function testCreateFromDatabaseRow(): void
+    {
+        $storedMessage = StoredMessage::fromDatabaseRow(
+            [
+                'id' => 'id',
+                'class' => Message::class,
+                'dispatched_at' => '2019-01-01 10:00:00',
+                'received_at' => '2019-01-01 10:05:00'
+            ]
+        );
+
+        $this->assertEquals(
+            new StoredMessage('id', Message::class, new \DateTimeImmutable('2019-01-01 10:00:00'), new \DateTimeImmutable('2019-01-01 10:05:00')),
+            $storedMessage
+        );
+    }
+
     public function testExceptionWhenCreateFromEnvelopeWithoutStamp(): void
     {
         $this->expectException(\RuntimeException::class);

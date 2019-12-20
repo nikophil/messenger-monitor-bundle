@@ -2,7 +2,6 @@
 
 namespace KaroIO\MessengerMonitorBundle\IntegrationTests\Storage;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\DBAL\Connection;
 use KaroIO\MessengerMonitorBundle\Storage\DoctrineConnection;
 use KaroIO\MessengerMonitorBundle\Storage\StoredMessage;
@@ -57,5 +56,22 @@ final class DoctrineConnectionTest extends KernelTestCase
 
         $this->assertInstanceOf(StoredMessage::class, $doctrineConnection->findMessage('id1'));
         $this->assertInstanceOf(StoredMessage::class, $doctrineConnection->findMessage('id2'));
+    }
+
+    public function testUpdateMessage(): void
+    {
+        /** @var DoctrineConnection $doctrineConnection */
+        $doctrineConnection = self::$container->get('karo-io.messenger_monitor.storage.doctrine_connection');
+
+        $doctrineConnection->saveMessage($storedMessage = new StoredMessage('id', Message::class, new \DateTimeImmutable()));
+        $storedMessage->setReceivedAt();
+        $doctrineConnection->updateMessage($storedMessage);
+
+        $storedMessageLoadedFromDatabase = $doctrineConnection->findMessage('id');
+
+        $this->assertEquals(
+            $storedMessage,
+            $storedMessageLoadedFromDatabase
+        );
     }
 }
