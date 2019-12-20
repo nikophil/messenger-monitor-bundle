@@ -64,8 +64,18 @@
         </service>
 
         <!-- EventListener -->
-        <service id="karo-io.messenger_monitor.listener.add_monitor_id_samp" class="KaroIO\MessengerMonitorBundle\EventListener\AddMonitorIdStampListener">
+        <service id="karo-io.messenger_monitor.listener.add_monitor_id_samp" class="KaroIO\MessengerMonitorBundle\EventListener\AddStampOnMessageSentListener">
             <tag name="kernel.event_subscriber" />
         </service>
+
+        <service id="karo-io.messenger_monitor.listener.store_in_doctrine" class="KaroIO\MessengerMonitorBundle\EventListener\StoreInDoctrineOnMessageSentListener">
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+        <!-- Storage -->
+        <service id="karo-io.messenger_monitor.storage.doctrine_connection" class="KaroIO\MessengerMonitorBundle\Storage\DoctrineConnection">
+            <argument type="service" id="doctrine.dbal.default_connection" />
+        </service>
+
     </services>
 </container>
