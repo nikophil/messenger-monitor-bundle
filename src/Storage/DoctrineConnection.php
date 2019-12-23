@@ -52,6 +52,7 @@ SQL
             ,
             [
                 'received_at' => null !== $storedMessage->getReceivedAt() ? $storedMessage->getReceivedAt()->format('Y-m-d H:i:s') : null,
+                'handled_at' => null !== $storedMessage->getHandledAt() ? $storedMessage->getHandledAt()->format('Y-m-d H:i:s') : null,
                 'id' => $storedMessage->getId(),
             ]
         );
@@ -104,7 +105,7 @@ SQL
         $table->addColumn('class', Types::STRING)->setLength(255)->setNotnull(true);
         $table->addColumn('dispatched_at', Types::DATETIME_IMMUTABLE)->setNotnull(true);
         $table->addColumn('received_at', Types::DATETIME_IMMUTABLE)->setNotnull(false);
-        $table->addColumn('handle_finished_at', Types::DATETIME_IMMUTABLE)->setNotnull(false);
+        $table->addColumn('handled_at', Types::DATETIME_IMMUTABLE)->setNotnull(false);
         $table->addColumn('retries', Types::INTEGER)->setDefault(0);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['dispatched_at']);

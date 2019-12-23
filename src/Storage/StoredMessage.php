@@ -12,15 +12,22 @@ final class StoredMessage
     private $messageClass;
     private $dispatchedAt;
     private $receivedAt;
+    private $handledAt;
 
-    public function __construct(string $id, string $messageClass, \DateTimeImmutable $dispatchedAt, ?\DateTimeImmutable $receivedAt = null)
+    public function __construct(string $id, string $messageClass, \DateTimeImmutable $dispatchedAt, ?\DateTimeImmutable $receivedAt = null, ?\DateTimeImmutable $handledAt = null)
     {
         $this->id = $id;
         $this->messageClass = $messageClass;
-        $this->dispatchedAt = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $dispatchedAt->format('Y-m-d H:i:s'));
+        $this->dispatchedAt = $dispatchedAt;
 
         if (null !== $receivedAt) {
-            $this->receivedAt = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $receivedAt->format('Y-m-d H:i:s'));
+            $this->receivedAt = $receivedAt;
+
+            if (null !== $handledAt) {
+                $this->handledAt = $handledAt;
+            }
+        } elseif (null !== $handledAt) {
+            throw new \RuntimeException('"receivedAt" could not be null if "handledAt" is not null');
         }
     }
 
@@ -46,7 +53,8 @@ final class StoredMessage
             $row['id'],
             $row['class'],
             new \DateTimeImmutable($row['dispatched_at']),
-            $row['received_at'] !== null ? new \DateTimeImmutable($row['received_at']) : null
+            $row['received_at'] !== null ? new \DateTimeImmutable($row['received_at']) : null,
+            $row['handled_at'] !== null ? new \DateTimeImmutable($row['handled_at']) : null
         );
     }
 
@@ -65,13 +73,23 @@ final class StoredMessage
         return $this->dispatchedAt;
     }
 
-    public function setReceivedAt(): void
+    public function setReceivedAt(\DateTimeImmutable $receivedAt): void
     {
-        $this->receivedAt = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'));
+        $this->receivedAt = $receivedAt;
     }
 
     public function getReceivedAt(): ?\DateTimeImmutable
     {
         return $this->receivedAt;
+    }
+
+    public function setHandledAt(\DateTimeImmutable $handledAt): void
+    {
+        $this->handledAt = $handledAt;
+    }
+
+    public function getHandledAt(): ?\DateTimeImmutable
+    {
+        return $this->handledAt;
     }
 }

@@ -10,11 +10,16 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Event\SendMessageToTransportsEvent;
 
-final class UpdateInDoctrineOnMessageReceivedListenerTest extends TestCase
+final class UpdateInDoctrineListenerTest extends TestCase
 {
+    public function setUp(): void
+    {
+
+    }
+
     public function testUpdateInDoctrineOnMessageReceived(): void
     {
-        $listener = new UpdateInDoctrineOnMessageReceivedListener(
+        $listener = new UpdateInDoctrineListener(
             $doctrineConnection = $this->createMock(DoctrineConnection::class)
         );
 
@@ -30,5 +35,27 @@ final class UpdateInDoctrineOnMessageReceivedListenerTest extends TestCase
             ->with($storedMessage);
 
         $listener->onMessageReceived(new SendMessageToTransportsEvent($envelope));
+        $this->assertNotNull($storedMessage->getReceivedAt());
+    }
+
+    public function testUpdateInDoctrineOnMessageHandled(): void
+    {
+        $listener = new UpdateInDoctrineListener(
+            $doctrineConnection = $this->createMock(DoctrineConnection::class)
+        );
+
+        $envelope = new Envelope(new Message(), [$stamp = new MonitorIdStamp()]);
+
+        $doctrineConnection->expects($this->once())
+            ->method('findMessage')
+            ->with($stamp->getId())
+            ->willReturn($storedMessage = new StoredMessage($stamp->getId(), Message::class, new \DateTimeImmutable(), new \DateTimeImmutable()));
+
+        $doctrineConnection->expects($this->once())
+            ->method('updateMessage')
+            ->with($storedMessage);
+
+        $listener->onMessageHandled(new SendMessageToTransportsEvent($envelope));
+        $this->assertNotNull($storedMessage->getHandledAt());
     }
 }

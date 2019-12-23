@@ -38,7 +38,7 @@ final class DoctrineConnectionTest extends KernelTestCase
         $doctrineConnection = self::$container->get('karo-io.messenger_monitor.storage.doctrine_connection');
 
         $doctrineConnection->saveMessage(
-            new StoredMessage('id', Message::class, $dispatchedAt = new \DateTimeImmutable())
+            new StoredMessage('id', Message::class, $dispatchedAt = (new \DateTimeImmutable())->setTime(0, 0, 0))
         );
 
         $storedMessage = $doctrineConnection->findMessage('id');
@@ -64,14 +64,20 @@ final class DoctrineConnectionTest extends KernelTestCase
         $doctrineConnection = self::$container->get('karo-io.messenger_monitor.storage.doctrine_connection');
 
         $doctrineConnection->saveMessage($storedMessage = new StoredMessage('id', Message::class, new \DateTimeImmutable()));
-        $storedMessage->setReceivedAt();
+        $storedMessage->setReceivedAt(\DateTimeImmutable::createFromFormat('U', (string) time()));
+        $storedMessage->setHandledAt(\DateTimeImmutable::createFromFormat('U', (string) time()));
         $doctrineConnection->updateMessage($storedMessage);
 
         $storedMessageLoadedFromDatabase = $doctrineConnection->findMessage('id');
 
-        $this->assertEquals(
-            $storedMessage,
-            $storedMessageLoadedFromDatabase
+        $this->assertSame(
+            $storedMessage->getReceivedAt()->format('Y-m-d H:i:s'),
+            $storedMessageLoadedFromDatabase->getReceivedAt()->format('Y-m-d H:i:s')
+        );
+
+        $this->assertSame(
+            $storedMessage->getReceivedAt()->format('Y-m-d H:i:s'),
+            $storedMessageLoadedFromDatabase->getReceivedAt()->format('Y-m-d H:i:s')
         );
     }
 }

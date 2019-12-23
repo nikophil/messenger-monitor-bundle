@@ -35,12 +35,19 @@ final class StoredMessageTest extends TestCase
                 'id' => 'id',
                 'class' => Message::class,
                 'dispatched_at' => '2019-01-01 10:00:00',
-                'received_at' => '2019-01-01 10:05:00'
+                'received_at' => '2019-01-01 10:05:00',
+                'handled_at' => '2019-01-01 10:10:00'
             ]
         );
 
         $this->assertEquals(
-            new StoredMessage('id', Message::class, new \DateTimeImmutable('2019-01-01 10:00:00'), new \DateTimeImmutable('2019-01-01 10:05:00')),
+            new StoredMessage(
+                'id',
+                Message::class,
+                new \DateTimeImmutable('2019-01-01 10:00:00'),
+                new \DateTimeImmutable('2019-01-01 10:05:00'),
+                new \DateTimeImmutable('2019-01-01 10:10:00')
+            ),
             $storedMessage
         );
     }
