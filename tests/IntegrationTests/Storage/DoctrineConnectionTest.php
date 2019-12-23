@@ -3,13 +3,13 @@
 namespace KaroIO\MessengerMonitorBundle\IntegrationTests\Storage;
 
 use Doctrine\DBAL\Connection;
+use KaroIO\MessengerMonitorBundle\IntegrationTests\AbstractIntegrationTests;
 use KaroIO\MessengerMonitorBundle\Storage\DoctrineConnection;
 use KaroIO\MessengerMonitorBundle\Storage\StoredMessage;
 use KaroIO\MessengerMonitorBundle\Test\Message;
 use KaroIO\MessengerMonitorBundle\Test\TestKernel;
-use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-final class DoctrineConnectionTest extends KernelTestCase
+final class DoctrineConnectionTest extends AbstractIntegrationTests
 {
     protected static function getKernelClass(): string
     {
@@ -18,7 +18,7 @@ final class DoctrineConnectionTest extends KernelTestCase
 
     public function setUp(): void
     {
-        self::bootKernel();
+        parent::setUp();
 
         /** @var Connection $connection */
         $connection = self::$container->get('doctrine.dbal.default_connection');
