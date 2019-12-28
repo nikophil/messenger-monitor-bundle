@@ -29,6 +29,9 @@ final class KaroIOMessengerMonitorExtension extends Extension
             // todo: remove definition from all services tagged with "messenger_monitor.doctrine_driver"?
             $container->removeDefinition('karo-io.messenger_monitor.listener.store_in_doctrine');
             $container->removeDefinition('karo-io.messenger_monitor.storage.doctrine_connection');
+            $container->removeDefinition('karo-io.messenger_monitor.statistics.doctrine_processor');
+        } else {
+            $container->setAlias('karo-io.messenger_monitor.statistics.processor', 'karo-io.messenger_monitor.statistics.doctrine_processor');
         }
     }
 }

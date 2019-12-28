@@ -68,4 +68,45 @@ SQL
 
         return StoredMessage::fromDatabaseRow($row);
     }
+
+    public function getNbMessagesHandledForPeriod(\DateTimeImmutable $from, \DateTimeImmutable $to): int
+    {
+        return (int) $this->doctrineConnection->executeQuery(
+            <<<SQL
+SELECT count(id) FROM {$this->tableName}
+WHERE handled_at >= :from
+AND handled_at <= :to
+SQL
+            ,
+            ['from' => $from->format('Y:m:d H:i:s'), 'to' => $to->format('Y:m:d H:i:s')]
+        )->fetchColumn();
+    }
+
+    public function getAverageWaitingTimeForPeriod(\DateTimeImmutable $from, \DateTimeImmutable $to): int
+    {
+        return (int) $this->doctrineConnection->executeQuery(
+            <<<SQL
+SELECT AVG(TIME_TO_SEC(TIMEDIFF(received_at, dispatched_at))) FROM {$this->tableName}
+WHERE received_at IS NOT NULL
+AND received_at >= :from
+AND received_at <= :to
+SQL
+            ,
+            ['from' => $from->format('Y:m:d H:i:s'), 'to' => $to->format('Y:m:d H:i:s')]
+        )->fetchColumn();
+    }
+
+    public function getAverageHandlingTimeForPeriod(\DateTimeImmutable $from, \DateTimeImmutable $to): int
+    {
+        return (int) $this->doctrineConnection->executeQuery(
+            <<<SQL
+SELECT AVG(TIME_TO_SEC(TIMEDIFF(handled_at, received_at))) FROM {$this->tableName}
+WHERE handled_at IS NOT NULL
+AND handled_at >= :from
+AND handled_at <= :to
+SQL
+            ,
+            ['from' => $from->format('Y:m:d H:i:s'), 'to' => $to->format('Y:m:d H:i:s')]
+        )->fetchColumn();
+    }
 }
