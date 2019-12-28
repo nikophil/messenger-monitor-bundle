@@ -9,5 +9,6 @@ namespace KaroIO\MessengerMonitorBundle\Statistics;
  */
 interface StatisticsProcessor
 {
-    public function processStatistics(): Metrics;
+    /** @return Metrics[] */
+    public function processStatistics(): array;
 }

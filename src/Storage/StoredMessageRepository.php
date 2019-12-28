@@ -69,44 +69,63 @@ SQL
         return StoredMessage::fromDatabaseRow($row);
     }
 
-    public function getNbMessagesHandledForPeriod(\DateTimeImmutable $from, \DateTimeImmutable $to): int
+    public function getNbMessagesHandledForPeriod(\DateTimeImmutable $from, \DateTimeImmutable $to): array
     {
-        return (int) $this->doctrineConnection->executeQuery(
-            <<<SQL
-SELECT count(id) FROM {$this->tableName}
+        return $this->transformToAssociativeArray(
+            $this->doctrineConnection->executeQuery(
+                <<<SQL
+SELECT count(id) AS value, class FROM {$this->tableName}
 WHERE handled_at >= :from
 AND handled_at <= :to
+GROUP BY class
 SQL
-            ,
-            ['from' => $from->format('Y:m:d H:i:s'), 'to' => $to->format('Y:m:d H:i:s')]
-        )->fetchColumn();
+                ,
+                ['from' => $from->format('Y:m:d H:i:s'), 'to' => $to->format('Y:m:d H:i:s')]
+            )->fetchAll()
+        );
     }
 
-    public function getAverageWaitingTimeForPeriod(\DateTimeImmutable $from, \DateTimeImmutable $to): int
+    public function getAverageWaitingTimeForPeriod(\DateTimeImmutable $from, \DateTimeImmutable $to): array
     {
-        return (int) $this->doctrineConnection->executeQuery(
-            <<<SQL
-SELECT AVG(TIME_TO_SEC(TIMEDIFF(received_at, dispatched_at))) FROM {$this->tableName}
+        return $this->transformToAssociativeArray(
+            $this->doctrineConnection->executeQuery(
+                <<<SQL
+SELECT AVG(TIME_TO_SEC(TIMEDIFF(received_at, dispatched_at))) AS value, class FROM {$this->tableName}
 WHERE received_at IS NOT NULL
 AND received_at >= :from
 AND received_at <= :to
+GROUP BY class
 SQL
-            ,
-            ['from' => $from->format('Y:m:d H:i:s'), 'to' => $to->format('Y:m:d H:i:s')]
-        )->fetchColumn();
+                ,
+                ['from' => $from->format('Y:m:d H:i:s'), 'to' => $to->format('Y:m:d H:i:s')]
+            )->fetchAll()
+        );
     }
 
-    public function getAverageHandlingTimeForPeriod(\DateTimeImmutable $from, \DateTimeImmutable $to): int
+    public function getAverageHandlingTimeForPeriod(\DateTimeImmutable $from, \DateTimeImmutable $to): array
     {
-        return (int) $this->doctrineConnection->executeQuery(
-            <<<SQL
-SELECT AVG(TIME_TO_SEC(TIMEDIFF(handled_at, received_at))) FROM {$this->tableName}
+        return $this->transformToAssociativeArray(
+            $this->doctrineConnection->executeQuery(
+                <<<SQL
+SELECT AVG(TIME_TO_SEC(TIMEDIFF(handled_at, received_at))) AS value, class FROM {$this->tableName}
 WHERE handled_at IS NOT NULL
 AND handled_at >= :from
 AND handled_at <= :to
+GROUP BY class
 SQL
-            ,
-            ['from' => $from->format('Y:m:d H:i:s'), 'to' => $to->format('Y:m:d H:i:s')]
-        )->fetchColumn();
+                ,
+                ['from' => $from->format('Y:m:d H:i:s'), 'to' => $to->format('Y:m:d H:i:s')]
+            )->fetchAll()
+        );
+    }
+
+    private function transformToAssociativeArray(array $sourceArray): array
+    {
+        $normalizedArray = [];
+        foreach ($sourceArray as $item) {
+            $normalizedArray[$item['class']] = $item['value'];
+        }
+
+        return $normalizedArray;
     }
 }

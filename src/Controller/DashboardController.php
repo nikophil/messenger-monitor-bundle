@@ -62,7 +62,7 @@ final class DashboardController
                     'receivers' => $receivers,
                     'cannotListFailedMessages' => $cannotListFailedMessages,
                     'failedMessages' => $failedMessages,
-                    'metrics' =>  $this->statisticsProcessor->processStatistics()
+                    'metrics' => $this->statisticsProcessor->processStatistics(),
                 ]
             )
         );

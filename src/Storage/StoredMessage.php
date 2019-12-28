@@ -8,7 +8,7 @@ use KaroIO\MessengerMonitorBundle\Stamp\MonitorIdStamp;
 use Symfony\Component\Messenger\Envelope;
 
 /**
- * todo handle retries
+ * todo handle retries.
  *
  * @internal
  */

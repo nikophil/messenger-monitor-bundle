@@ -12,7 +12,7 @@ use Doctrine\DBAL\Schema\Synchronizer\SingleDatabaseSynchronizer;
 use Doctrine\DBAL\Types\Types;
 
 /**
- * todo: use some config to select connection and table name
+ * todo: use some config to select connection and table name.
  *
  * @internal
  */

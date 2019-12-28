@@ -23,25 +23,69 @@ final class DoctrineProcessor implements StatisticsProcessor
         $this->storedMessageRepository = $storedMessageRepository;
     }
 
-    public function processStatistics(): Metrics
+    /** {@inheritdoc} */
+    public function processStatistics(): array
     {
         // todo: this period should be chosen by user
-        $this->periodFrom = \DateTimeImmutable::createFromFormat('U', (string) (time() - (60 * 60 * 24)));
         $this->periodTo = \DateTimeImmutable::createFromFormat('U', (string) time());
+        //24 hours ago
+        $this->periodFrom = \DateTimeImmutable::createFromFormat('U', (string) (time() - (60 * 60 * 24)));
 
-        return new Metrics(
+        return $this->mergeMetrics();
+    }
+
+    private function mergeMetrics(): array
+    {
+        $metricsPerMessage = [];
+
+        $this->extractMetric(
             $this->computeMessagesHandledPerHour(),
+            'nb_messages_handled_per_hour',
+            $metricsPerMessage
+        );
+
+        $this->extractMetric(
             $this->storedMessageRepository->getAverageWaitingTimeForPeriod($this->periodFrom, $this->periodTo),
-            $this->storedMessageRepository->getAverageHandlingTimeForPeriod($this->periodFrom, $this->periodTo)
+            'average_waiting_time',
+            $metricsPerMessage
+        );
+
+        $this->extractMetric(
+            $this->storedMessageRepository->getAverageHandlingTimeForPeriod($this->periodFrom, $this->periodTo),
+            'average_handling_time',
+            $metricsPerMessage
+        );
+
+        return array_map(
+            static function (string $class, array $metrics) {
+                return Metrics::fromArray($class, $metrics);
+            },
+            array_keys($metricsPerMessage),
+            $metricsPerMessage
         );
     }
 
-    private function computeMessagesHandledPerHour(): int
+    private function computeMessagesHandledPerHour(): array
     {
-        $nbMessagesHandledOnPeriod = $this->storedMessageRepository->getNbMessagesHandledForPeriod($this->periodFrom, $this->periodTo);
-
+        $nbMessagesHandledOnPeriodGroupedByClass = $this->storedMessageRepository->getNbMessagesHandledForPeriod($this->periodFrom, $this->periodTo);
         $nbHoursInPeriod = abs($this->periodFrom->getTimestamp() - $this->periodTo->getTimestamp()) / (60 * 60);
 
-        return (int) ($nbMessagesHandledOnPeriod / $nbHoursInPeriod);
+        return array_map(
+            static function ($nbMessagesHandledOnPeriod) use ($nbHoursInPeriod) {
+                return round($nbMessagesHandledOnPeriod / $nbHoursInPeriod, 2);
+            },
+            $nbMessagesHandledOnPeriodGroupedByClass
+        );
+    }
+
+    private function extractMetric(array $newMetric, string $fieldName, array &$metricsPerMessage): void
+    {
+        foreach ($newMetric as $message => $nbMessagesHandledPerHour) {
+            if (!isset($metricsPerMessage[$message])) {
+                $metricsPerMessage[$message] = [];
+            }
+
+            $metricsPerMessage[$message][$fieldName] = $nbMessagesHandledPerHour;
+        }
     }
 }
