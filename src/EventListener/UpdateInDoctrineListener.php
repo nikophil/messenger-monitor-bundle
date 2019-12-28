@@ -13,6 +13,7 @@ use Symfony\Component\Messenger\Event\WorkerMessageHandledEvent;
 use Symfony\Component\Messenger\Event\WorkerMessageReceivedEvent;
 
 /**
+ * todo: see how retries fit into this
  * @internal
  */
 final class UpdateInDoctrineListener implements EventSubscriberInterface

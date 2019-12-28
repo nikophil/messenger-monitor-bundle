@@ -26,6 +26,7 @@ final class KaroIOMessengerMonitorExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         if ('doctrine' !== $config['driver']) {
+            // todo: remove definition from all services tagged with "messenger_monitor.doctrine_driver"?
             $container->removeDefinition('karo-io.messenger_monitor.listener.store_in_doctrine');
             $container->removeDefinition('karo-io.messenger_monitor.storage.doctrine_connection');
         }
