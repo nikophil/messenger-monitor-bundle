@@ -1,83 +1,25 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace KaroIO\MessengerMonitorBundle\IntegrationTests\Storage;
 
-use Doctrine\DBAL\Connection;
-use KaroIO\MessengerMonitorBundle\IntegrationTests\AbstractIntegrationTests;
+use KaroIO\MessengerMonitorBundle\IntegrationTests\AbstractDoctrineIntegrationTests;
 use KaroIO\MessengerMonitorBundle\Storage\DoctrineConnection;
-use KaroIO\MessengerMonitorBundle\Storage\StoredMessage;
-use KaroIO\MessengerMonitorBundle\Test\Message;
-use KaroIO\MessengerMonitorBundle\Test\TestKernel;
 
-final class DoctrineConnectionTest extends AbstractIntegrationTests
+final class DoctrineConnectionTest extends AbstractDoctrineIntegrationTests
 {
-    protected static function getKernelClass(): string
-    {
-        return TestKernel::class;
-    }
-
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        /** @var Connection $connection */
-        $connection = self::$container->get('doctrine.dbal.default_connection');
-
-        try {
-            $connection->connect();
-        } catch (\Exception $exception) {
-            $this->markTestSkipped(sprintf('Can\'t connect to connection: %s', $exception->getMessage()));
-        }
-
-        $connection->executeQuery('DROP TABLE IF EXISTS messenger_monitor');
-    }
-
-    public function testSaveAndLoadMessage(): void
+    public function testExecuteQueryUpdatesSchema(): void
     {
         /** @var DoctrineConnection $doctrineConnection */
         $doctrineConnection = self::$container->get('karo-io.messenger_monitor.storage.doctrine_connection');
 
-        $doctrineConnection->saveMessage(
-            new StoredMessage('id', Message::class, $dispatchedAt = (new \DateTimeImmutable())->setTime(0, 0, 0))
+        $statement = $doctrineConnection->executeQuery(
+            <<<SQL
+SHOW COLUMNS FROM messenger_monitor
+SQL
         );
 
-        $storedMessage = $doctrineConnection->findMessage('id');
-
-        $this->assertEquals(new StoredMessage('id', Message::class, $dispatchedAt), $storedMessage);
-    }
-
-    public function testSeveralMessages(): void
-    {
-        /** @var DoctrineConnection $doctrineConnection */
-        $doctrineConnection = self::$container->get('karo-io.messenger_monitor.storage.doctrine_connection');
-
-        $doctrineConnection->saveMessage(new StoredMessage('id1', Message::class, new \DateTimeImmutable()));
-        $doctrineConnection->saveMessage(new StoredMessage('id2', Message::class, new \DateTimeImmutable()));
-
-        $this->assertInstanceOf(StoredMessage::class, $doctrineConnection->findMessage('id1'));
-        $this->assertInstanceOf(StoredMessage::class, $doctrineConnection->findMessage('id2'));
-    }
-
-    public function testUpdateMessage(): void
-    {
-        /** @var DoctrineConnection $doctrineConnection */
-        $doctrineConnection = self::$container->get('karo-io.messenger_monitor.storage.doctrine_connection');
-
-        $doctrineConnection->saveMessage($storedMessage = new StoredMessage('id', Message::class, new \DateTimeImmutable()));
-        $storedMessage->setReceivedAt(\DateTimeImmutable::createFromFormat('U', (string) time()));
-        $storedMessage->setHandledAt(\DateTimeImmutable::createFromFormat('U', (string) time()));
-        $doctrineConnection->updateMessage($storedMessage);
-
-        $storedMessageLoadedFromDatabase = $doctrineConnection->findMessage('id');
-
-        $this->assertSame(
-            $storedMessage->getReceivedAt()->format('Y-m-d H:i:s'),
-            $storedMessageLoadedFromDatabase->getReceivedAt()->format('Y-m-d H:i:s')
-        );
-
-        $this->assertSame(
-            $storedMessage->getReceivedAt()->format('Y-m-d H:i:s'),
-            $storedMessageLoadedFromDatabase->getReceivedAt()->format('Y-m-d H:i:s')
-        );
+        $this->assertCount(6, $statement->fetchAll());
     }
 }

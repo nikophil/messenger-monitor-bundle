@@ -1,11 +1,17 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace KaroIO\MessengerMonitorBundle\Storage;
 
 use KaroIO\MessengerMonitorBundle\Stamp\MonitorIdStamp;
 use Symfony\Component\Messenger\Envelope;
 
-// todo handle retries
+/**
+ * todo handle retries
+ *
+ * @internal
+ */
 final class StoredMessage
 {
     private $id;
@@ -42,7 +48,7 @@ final class StoredMessage
 
         return new self(
             $monitorIdStamp->getId(),
-            get_class($envelope->getMessage()),
+            \get_class($envelope->getMessage()),
             \DateTimeImmutable::createFromFormat('U', (string) time())
         );
     }
@@ -53,8 +59,8 @@ final class StoredMessage
             $row['id'],
             $row['class'],
             new \DateTimeImmutable($row['dispatched_at']),
-            $row['received_at'] !== null ? new \DateTimeImmutable($row['received_at']) : null,
-            $row['handled_at'] !== null ? new \DateTimeImmutable($row['handled_at']) : null
+            null !== $row['received_at'] ? new \DateTimeImmutable($row['received_at']) : null,
+            null !== $row['handled_at'] ? new \DateTimeImmutable($row['handled_at']) : null
         );
     }
 

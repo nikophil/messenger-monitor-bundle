@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace KaroIO\MessengerMonitorBundle\Storage;
 
@@ -9,8 +11,11 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Synchronizer\SingleDatabaseSynchronizer;
 use Doctrine\DBAL\Types\Types;
 
-// todo: use some config to select connection and table name
-// todo: this should be conditionally declared as a service depending on storage driver
+/**
+ * todo: use some config to select connection and table name
+ *
+ * @internal
+ */
 class DoctrineConnection
 {
     private $driverConnection;
@@ -24,58 +29,7 @@ class DoctrineConnection
         $this->tableName = $tableName;
     }
 
-    public function saveMessage(StoredMessage $storedMessage): void
-    {
-        $this->executeQuery(
-            <<<SQL
-INSERT INTO {$this->tableName}
-(id, class, dispatched_at)
-VALUES (:id, :class, :dispatched_at)
-SQL
-            ,
-            [
-                'id' => $storedMessage->getId(),
-                'class' => $storedMessage->getMessageClass(),
-                'dispatched_at' => $storedMessage->getDispatchedAt()->format('Y-m-d H:i:s')
-            ]
-        );
-    }
-
-    public function updateMessage(StoredMessage $storedMessage): void
-    {
-        $this->executeQuery(
-            <<<SQL
-UPDATE {$this->tableName}
-    SET received_at = :received_at
-WHERE id = :id
-SQL
-            ,
-            [
-                'received_at' => null !== $storedMessage->getReceivedAt() ? $storedMessage->getReceivedAt()->format('Y-m-d H:i:s') : null,
-                'handled_at' => null !== $storedMessage->getHandledAt() ? $storedMessage->getHandledAt()->format('Y-m-d H:i:s') : null,
-                'id' => $storedMessage->getId(),
-            ]
-        );
-    }
-
-    public function findMessage(string $id): ?StoredMessage
-    {
-        $statement = $this->executeQuery(
-            <<<SQL
-SELECT * FROM {$this->tableName} WHERE id = :id
-SQL
-            ,
-            ['id' => $id,]
-        );
-
-        if (false === $row = $statement->fetch()) {
-            return null;
-        }
-
-        return StoredMessage::fromDatabaseRow($row);
-    }
-
-    private function executeQuery(string $sql, array $parameters = [], array $types = []): ResultStatement
+    public function executeQuery(string $sql, array $parameters = [], array $types = []): ResultStatement
     {
         try {
             $stmt = $this->driverConnection->executeQuery($sql, $parameters, $types);

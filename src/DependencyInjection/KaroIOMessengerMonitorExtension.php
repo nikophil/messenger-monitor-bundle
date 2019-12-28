@@ -21,5 +21,13 @@ final class KaroIOMessengerMonitorExtension extends Extension
             new FileLocator(__DIR__.'/../Resources/config')
         );
         $loader->load('services.xml');
+
+        $configuration = $this->getConfiguration($configs, $container);
+        $config = $this->processConfiguration($configuration, $configs);
+
+        if ('doctrine' !== $config['driver']) {
+            $container->removeDefinition('karo-io.messenger_monitor.listener.store_in_doctrine');
+            $container->removeDefinition('karo-io.messenger_monitor.storage.doctrine_connection');
+        }
     }
 }

@@ -1,0 +1,35 @@
+<?php
+
+declare(strict_types=1);
+
+namespace KaroIO\MessengerMonitorBundle\IntegrationTests;
+
+use Doctrine\DBAL\Connection;
+use KaroIO\MessengerMonitorBundle\Test\TestKernel;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+
+abstract class AbstractDoctrineIntegrationTests extends KernelTestCase
+{
+    protected static function getKernelClass(): string
+    {
+        return TestKernel::class;
+    }
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        self::bootKernel();
+
+        /** @var Connection $connection */
+        $connection = self::$container->get('doctrine.dbal.default_connection');
+
+        try {
+            $connection->connect();
+        } catch (\Exception $exception) {
+            $this->markTestSkipped(sprintf('Can\'t connect to connection: %s', $exception->getMessage()));
+        }
+
+        $connection->executeQuery('DROP TABLE IF EXISTS messenger_monitor');
+    }
+}

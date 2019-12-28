@@ -1,25 +1,29 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace KaroIO\MessengerMonitorBundle\EventListener;
 
-use KaroIO\MessengerMonitorBundle\Storage\DoctrineConnection;
 use KaroIO\MessengerMonitorBundle\Storage\StoredMessage;
+use KaroIO\MessengerMonitorBundle\Storage\StoredMessageRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\Event\SendMessageToTransportsEvent;
 
-// todo: this should be conditionally declared as a service depending on storage driver
+/**
+ * @internal
+ */
 final class StoreInDoctrineOnMessageSentListener implements EventSubscriberInterface
 {
-    private $doctrineConnection;
+    private $storedMessageRepository;
 
-    public function __construct(DoctrineConnection $doctrineConnection)
+    public function __construct(StoredMessageRepository $storedMessageRepository)
     {
-        $this->doctrineConnection = $doctrineConnection;
+        $this->storedMessageRepository = $storedMessageRepository;
     }
 
     public function onMessageSent(SendMessageToTransportsEvent $event): void
     {
-        $this->doctrineConnection->saveMessage(StoredMessage::fromEnvelope($event->getEnvelope()));
+        $this->storedMessageRepository->saveMessage(StoredMessage::fromEnvelope($event->getEnvelope()));
     }
 
     public static function getSubscribedEvents(): array

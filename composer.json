@@ -12,7 +12,6 @@
         "symfony/messenger": "^4.4|^5.0",
         "symfony/routing": "^4.4|^5.0",
         "symfony/polyfill-uuid": "^1.13",
-        "symfony/polyfill-uuid": "^1.13",
         "symfony/twig-bundle": "^4.4|^5.0"
     },
     "require-dev": {

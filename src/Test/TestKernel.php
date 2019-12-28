@@ -1,8 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace KaroIO\MessengerMonitorBundle\Test;
 
-use App\Framework\DependencyInjection\Compiler\TestEnvironmentExclusionPass;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use KaroIO\MessengerMonitorBundle\KaroIOMessengerMonitorBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
@@ -42,10 +43,10 @@ class TestKernel extends Kernel
                     'connections' => [
                         'default' => [
                             'url' => $_ENV['TEST_DATABASE_DSN'],
-                            'logging' => false
-                        ]
-                    ]
-                ]
+                            'logging' => false,
+                        ],
+                    ],
+                ],
             ]
         );
     }

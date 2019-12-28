@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace KaroIO\MessengerMonitorBundle\Storage;
 
@@ -36,7 +38,7 @@ final class StoredMessageTest extends TestCase
                 'class' => Message::class,
                 'dispatched_at' => '2019-01-01 10:00:00',
                 'received_at' => '2019-01-01 10:05:00',
-                'handled_at' => '2019-01-01 10:10:00'
+                'handled_at' => '2019-01-01 10:10:00',
             ]
         );
 
