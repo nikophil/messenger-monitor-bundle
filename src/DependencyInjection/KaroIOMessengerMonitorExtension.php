@@ -16,10 +16,7 @@ final class KaroIOMessengerMonitorExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
-        $loader = new XmlFileLoader(
-            $container,
-            new FileLocator(__DIR__.'/../Resources/config')
-        );
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
         $configuration = $this->getConfiguration($configs, $container);
@@ -36,6 +33,13 @@ final class KaroIOMessengerMonitorExtension extends Extension
             $container->removeDefinition('karo-io.messenger_monitor.statistics.redis_processor');
 
             $container->setAlias('karo-io.messenger_monitor.statistics.processor', 'karo-io.messenger_monitor.statistics.doctrine_processor');
+
+            $tableName = $config['table_name'] ?? 'karo_io_messenger_monitor';
+            $doctrineConnectionDefinition = $container->getDefinition('karo-io.messenger_monitor.storage.doctrine_connection');
+            $doctrineConnectionDefinition->replaceArgument(1, $tableName);
+
+            $storedMessageRepositoryDefinition = $container->getDefinition('karo-io.messenger_monitor.storage.stored_message_repository');
+            $storedMessageRepositoryDefinition->replaceArgument(1, $tableName);
         }
     }
 }

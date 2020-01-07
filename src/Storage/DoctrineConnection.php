@@ -12,7 +12,7 @@ use Doctrine\DBAL\Schema\Synchronizer\SingleDatabaseSynchronizer;
 use Doctrine\DBAL\Types\Types;
 
 /**
- * todo: use some config to select connection and table name.
+ * todo: use some config to select connection.
  *
  * @internal
  */
@@ -22,7 +22,7 @@ class DoctrineConnection
     private $schemaSynchronizer;
     private $tableName;
 
-    public function __construct(DBALConnection $driverConnection, string $tableName = 'messenger_monitor')
+    public function __construct(DBALConnection $driverConnection, string $tableName)
     {
         $this->driverConnection = $driverConnection;
         $this->schemaSynchronizer = new SingleDatabaseSynchronizer($this->driverConnection);

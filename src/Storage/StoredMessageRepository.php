@@ -12,7 +12,7 @@ class StoredMessageRepository
     private $doctrineConnection;
     private $tableName;
 
-    public function __construct(DoctrineConnection $doctrineConnection, string $tableName = 'messenger_monitor')
+    public function __construct(DoctrineConnection $doctrineConnection, string $tableName)
     {
         $this->doctrineConnection = $doctrineConnection;
         $this->tableName = $tableName;

@@ -16,7 +16,7 @@ final class DoctrineConnectionTest extends AbstractDoctrineIntegrationTests
 
         $statement = $doctrineConnection->executeQuery(
             <<<SQL
-SHOW COLUMNS FROM messenger_monitor
+SHOW COLUMNS FROM karo_io_messenger_monitor
 SQL
         );
 

@@ -80,12 +80,15 @@
         </service>
 
         <!-- Storage -->
-        <service id="karo-io.messenger_monitor.storage.doctrine_connection" class="KaroIO\MessengerMonitorBundle\Storage\DoctrineConnection">
+        <!-- todo: remove public -->
+        <service id="karo-io.messenger_monitor.storage.doctrine_connection" class="KaroIO\MessengerMonitorBundle\Storage\DoctrineConnection" public="true">
             <argument type="service" id="doctrine.dbal.default_connection" />
+            <argument /> <!-- Doctrine's table name -->
         </service>
 
-        <service id="karo-io.messenger_monitor.storage.stored_message_repository" class="KaroIO\MessengerMonitorBundle\Storage\StoredMessageRepository">
+        <service id="karo-io.messenger_monitor.storage.stored_message_repository" class="KaroIO\MessengerMonitorBundle\Storage\StoredMessageRepository" public="true">
             <argument type="service" id="karo-io.messenger_monitor.storage.doctrine_connection" />
+            <argument /> <!-- Doctrine's table name -->
         </service>
 
         <!-- Statistics -->

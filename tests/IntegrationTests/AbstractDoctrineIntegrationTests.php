@@ -30,6 +30,6 @@ abstract class AbstractDoctrineIntegrationTests extends KernelTestCase
             $this->markTestSkipped(sprintf('Can\'t connect to connection: %s', $exception->getMessage()));
         }
 
-        $connection->executeQuery('DROP TABLE IF EXISTS messenger_monitor');
+        $connection->executeQuery('DROP TABLE IF EXISTS karo_io_messenger_monitor');
     }
 }
