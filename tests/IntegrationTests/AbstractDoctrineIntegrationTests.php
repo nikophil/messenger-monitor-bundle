@@ -10,9 +10,9 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class AbstractDoctrineIntegrationTests extends KernelTestCase
 {
-    protected static function getKernelClass(): string
+    protected static function createKernel(array $options = [])
     {
-        return TestKernel::class;
+        return new TestKernel();
     }
 
     public function setUp(): void

@@ -92,5 +92,6 @@
         <service id="karo-io.messenger_monitor.statistics.doctrine_processor" class="KaroIO\MessengerMonitorBundle\Statistics\DoctrineProcessor">
             <argument type="service" id="karo-io.messenger_monitor.storage.stored_message_repository" />
         </service>
+        <service id="karo-io.messenger_monitor.statistics.redis_processor" class="KaroIO\MessengerMonitorBundle\Statistics\RedisProcessor" />
     </services>
 </container>

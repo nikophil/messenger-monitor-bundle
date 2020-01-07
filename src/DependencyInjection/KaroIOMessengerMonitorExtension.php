@@ -30,7 +30,11 @@ final class KaroIOMessengerMonitorExtension extends Extension
             $container->removeDefinition('karo-io.messenger_monitor.listener.store_in_doctrine');
             $container->removeDefinition('karo-io.messenger_monitor.storage.doctrine_connection');
             $container->removeDefinition('karo-io.messenger_monitor.statistics.doctrine_processor');
+
+            $container->setAlias('karo-io.messenger_monitor.statistics.processor', 'karo-io.messenger_monitor.statistics.redis_processor');
         } else {
+            $container->removeDefinition('karo-io.messenger_monitor.statistics.redis_processor');
+
             $container->setAlias('karo-io.messenger_monitor.statistics.processor', 'karo-io.messenger_monitor.statistics.doctrine_processor');
         }
     }
