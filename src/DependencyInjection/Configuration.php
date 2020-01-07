@@ -39,12 +39,15 @@ final class Configuration implements ConfigurationInterface
                 ->scalarNode('table_name')
                     ->defaultNull()
                 ->end()
+                ->scalarNode('doctrine_connection')
+                    ->defaultNull()
+                ->end()
             ->end()
             ->validate()
                 ->ifTrue(function($value) {
-                    return null !== $value['table_name'] && 'redis' === $value['driver'];
+                    return (null !== $value['table_name'] || null !== $value['doctrine_connection']) && 'redis' === $value['driver'];
                 })
-                ->thenInvalid('"table_name" can only be used with doctrine driver.')
+                ->thenInvalid('"table_name" and "doctrine_connection" can only be used with doctrine driver.')
             ->end();
 
         return $treeBuilder;

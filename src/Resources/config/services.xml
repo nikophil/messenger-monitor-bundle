@@ -82,7 +82,12 @@
         <!-- Storage -->
         <!-- todo: remove public -->
         <service id="karo-io.messenger_monitor.storage.doctrine_connection" class="KaroIO\MessengerMonitorBundle\Storage\DoctrineConnection" public="true">
-            <argument type="service" id="doctrine.dbal.default_connection" />
+            <factory service="karo-io.messenger_monitor.storage.doctrine_connection_factory"/>
+        </service>
+
+        <service id="karo-io.messenger_monitor.storage.doctrine_connection_factory" class="KaroIO\MessengerMonitorBundle\Storage\DoctrineConnectionFactory">
+            <argument type="service" id="doctrine" />
+            <argument /> <!-- Doctrine's connection name -->
             <argument /> <!-- Doctrine's table name -->
         </service>
 

@@ -35,8 +35,11 @@ final class KaroIOMessengerMonitorExtension extends Extension
             $container->setAlias('karo-io.messenger_monitor.statistics.processor', 'karo-io.messenger_monitor.statistics.doctrine_processor');
 
             $tableName = $config['table_name'] ?? 'karo_io_messenger_monitor';
-            $doctrineConnectionDefinition = $container->getDefinition('karo-io.messenger_monitor.storage.doctrine_connection');
-            $doctrineConnectionDefinition->replaceArgument(1, $tableName);
+            $doctrineConnectionFactoryDefinition = $container->getDefinition('karo-io.messenger_monitor.storage.doctrine_connection_factory');
+            $doctrineConnectionFactoryDefinition->replaceArgument(2, $tableName);
+
+            $doctrineConnection = $config['doctrine_connection'] ?? 'default';
+            $doctrineConnectionFactoryDefinition->replaceArgument(1, $doctrineConnection);
 
             $storedMessageRepositoryDefinition = $container->getDefinition('karo-io.messenger_monitor.storage.stored_message_repository');
             $storedMessageRepositoryDefinition->replaceArgument(1, $tableName);
