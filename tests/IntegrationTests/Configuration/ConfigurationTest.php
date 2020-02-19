@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace KaroIO\MessengerMonitorBundle\IntegrationTests\Configuration;
+namespace KaroIO\MessengerMonitorBundle\Tests\IntegrationTests\Configuration;
 
-use KaroIO\MessengerMonitorBundle\Test\TestKernel;
+use KaroIO\MessengerMonitorBundle\Tests\TestKernel;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 

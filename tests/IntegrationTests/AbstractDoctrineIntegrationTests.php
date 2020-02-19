@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace KaroIO\MessengerMonitorBundle\IntegrationTests;
+namespace KaroIO\MessengerMonitorBundle\Tests\IntegrationTests;
 
 use Doctrine\DBAL\Connection;
-use KaroIO\MessengerMonitorBundle\Test\TestKernel;
+use KaroIO\MessengerMonitorBundle\Tests\TestKernel;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 abstract class AbstractDoctrineIntegrationTests extends KernelTestCase

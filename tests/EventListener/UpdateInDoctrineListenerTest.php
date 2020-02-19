@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace KaroIO\MessengerMonitorBundle\EventListener;
+namespace KaroIO\MessengerMonitorBundle\Tests\EventListener;
 
+use KaroIO\MessengerMonitorBundle\EventListener\UpdateInDoctrineListener;
 use KaroIO\MessengerMonitorBundle\Stamp\MonitorIdStamp;
 use KaroIO\MessengerMonitorBundle\Storage\StoredMessage;
 use KaroIO\MessengerMonitorBundle\Storage\StoredMessageRepository;
-use KaroIO\MessengerMonitorBundle\Test\Message;
+use KaroIO\MessengerMonitorBundle\Tests\TestableMessage;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Event\WorkerMessageHandledEvent;
@@ -21,12 +22,12 @@ final class UpdateInDoctrineListenerTest extends TestCase
             $storedMessageRepository = $this->createMock(StoredMessageRepository::class)
         );
 
-        $envelope = new Envelope(new Message(), [$stamp = new MonitorIdStamp()]);
+        $envelope = new Envelope(new TestableMessage(), [$stamp = new MonitorIdStamp()]);
 
         $storedMessageRepository->expects($this->once())
             ->method('findMessage')
             ->with($stamp->getId())
-            ->willReturn($storedMessage = new StoredMessage($stamp->getId(), Message::class, new \DateTimeImmutable()));
+            ->willReturn($storedMessage = new StoredMessage($stamp->getId(), TestableMessage::class, new \DateTimeImmutable()));
 
         $storedMessageRepository->expects($this->once())
             ->method('updateMessage')
@@ -42,12 +43,12 @@ final class UpdateInDoctrineListenerTest extends TestCase
             $storedMessageRepository = $this->createMock(StoredMessageRepository::class)
         );
 
-        $envelope = new Envelope(new Message(), [$stamp = new MonitorIdStamp()]);
+        $envelope = new Envelope(new TestableMessage(), [$stamp = new MonitorIdStamp()]);
 
         $storedMessageRepository->expects($this->once())
             ->method('findMessage')
             ->with($stamp->getId())
-            ->willReturn($storedMessage = new StoredMessage($stamp->getId(), Message::class, new \DateTimeImmutable(), new \DateTimeImmutable()));
+            ->willReturn($storedMessage = new StoredMessage($stamp->getId(), TestableMessage::class, new \DateTimeImmutable(), new \DateTimeImmutable()));
 
         $storedMessageRepository->expects($this->once())
             ->method('updateMessage')

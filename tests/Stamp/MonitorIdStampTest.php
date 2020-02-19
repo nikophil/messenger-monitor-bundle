@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace KaroIO\MessengerMonitorBundle\Stamp;
+namespace KaroIO\MessengerMonitorBundle\Tests\Stamp;
 
+use KaroIO\MessengerMonitorBundle\Stamp\MonitorIdStamp;
 use PHPUnit\Framework\TestCase;
 
 final class MonitorIdStampTest extends TestCase

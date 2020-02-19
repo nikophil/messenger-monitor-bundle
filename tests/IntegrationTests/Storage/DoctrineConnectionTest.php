@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace KaroIO\MessengerMonitorBundle\IntegrationTests\Storage;
+namespace KaroIO\MessengerMonitorBundle\Tests\IntegrationTests\Storage;
 
-use KaroIO\MessengerMonitorBundle\IntegrationTests\AbstractDoctrineIntegrationTests;
 use KaroIO\MessengerMonitorBundle\Storage\DoctrineConnection;
+use KaroIO\MessengerMonitorBundle\Tests\IntegrationTests\AbstractDoctrineIntegrationTests;
 
 final class DoctrineConnectionTest extends AbstractDoctrineIntegrationTests
 {

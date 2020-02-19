@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace KaroIO\MessengerMonitorBundle\Test;
+namespace KaroIO\MessengerMonitorBundle\Tests;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use KaroIO\MessengerMonitorBundle\KaroIOMessengerMonitorBundle;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouteCollectionBuilder;
 
-class TestKernel extends Kernel
+final class TestKernel extends Kernel
 {
     private $bundleOptions;
 
