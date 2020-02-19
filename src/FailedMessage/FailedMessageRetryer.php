@@ -15,8 +15,6 @@ use Symfony\Component\Messenger\Worker;
 
 /**
  * all this code was stolen from \Symfony\Component\Messenger\Command\FailedMessagesRetryCommand.
- *
- * @internal
  */
 final class FailedMessageRetryer
 {

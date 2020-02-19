@@ -11,8 +11,6 @@ use Symfony\Component\Messenger\Stamp\TransportMessageIdStamp;
 
 /**
  * all this code was stolen from \Symfony\Component\Messenger\Command\FailedMessagesShowCommand.
- *
- * @internal
  */
 final class FailedMessageRepository
 {
