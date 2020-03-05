@@ -8,6 +8,7 @@ use KaroIO\MessengerMonitorBundle\Exception\FailureReceiverDoesNotExistException
 use KaroIO\MessengerMonitorBundle\Exception\FailureReceiverNotListableException;
 use KaroIO\MessengerMonitorBundle\FailedMessage\FailedMessageRepository;
 use KaroIO\MessengerMonitorBundle\Locator\ReceiverLocator;
+use KaroIO\MessengerMonitorBundle\Statistics\StatisticsProcessor;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Transport\Receiver\MessageCountAwareInterface;
 use Twig\Environment;
@@ -20,6 +21,7 @@ final class DashboardController
     private $twig;
     private $receiverLocator;
     private $failedMessageRepository;
+    private $statisticsProcessor;
 
     public const FAILURE_RECEIVER_NOT_LISTABLE = 'failure-receiver-not-listable';
     public const NO_FAILURE_RECEIVER = 'no-failure-receiver';
@@ -27,11 +29,13 @@ final class DashboardController
     public function __construct(
         Environment $twig,
         ReceiverLocator $receiverLocator,
-        FailedMessageRepository $failedMessageRepository
+        FailedMessageRepository $failedMessageRepository,
+        StatisticsProcessor $statisticsProcessor
     ) {
         $this->twig = $twig;
         $this->receiverLocator = $receiverLocator;
         $this->failedMessageRepository = $failedMessageRepository;
+        $this->statisticsProcessor = $statisticsProcessor;
     }
 
     public function __invoke(): Response
@@ -55,9 +59,10 @@ final class DashboardController
             $this->twig->render(
                 '@KaroIOMessengerMonitor/dashboard.html.twig',
                 [
-                    'receivers' => $receivers,
+                    'receivers'                => $receivers,
                     'cannotListFailedMessages' => $cannotListFailedMessages,
-                    'failedMessages' => $failedMessages,
+                    'failedMessages'           => $failedMessages,
+                    'statistics'               => $this->statisticsProcessor->processStatistics(),
                 ]
             )
         );
